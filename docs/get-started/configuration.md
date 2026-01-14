@@ -322,6 +322,10 @@ their corresponding top-level category object in your `settings.json` file.
   - **Description:** Skip the next speaker check.
   - **Default:** `true`
 
+- **`model.seed`** (number):
+  - **Description:** The seed for the model.
+  - **Default:** `undefined`
+
 #### `modelConfigs`
 
 - **`modelConfigs.aliases`** (object):
@@ -1293,6 +1297,11 @@ for that specific session.
 - **`--model <model_name>`** (**`-m <model_name>`**):
   - Specifies the Gemini model to use for this session.
   - Example: `npm start -- --model gemini-3-pro-preview`
+- **`--seed <number>`**:
+  - Specifies a seed for the model to ensure deterministic outputs.
+  - For true deterministic output requires --model set, because otherwise
+    different models can be called.
+  - Example: `npm start -- --model gemini-3-pro-preview --seed 123`
 - **`--prompt <your_prompt>`** (**`-p <your_prompt>`**):
   - Used to pass a prompt directly to the command. This invokes Gemini CLI in a
     non-interactive mode.
