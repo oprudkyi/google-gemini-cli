@@ -1,10 +1,35 @@
+# Fork of Gemini CLI with support of model parameters
+
+Added ability to override default model parameters, via cli or config, useful
+for
+
+- advanced use cases in scripting or github actions
+- fine-tune speed/expenses
+
+| Option                     | Alias | Type    | Default | Description                                                                                                |
+| -------------------------- | ----- | ------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `--model-seed`             | -     | number  | -       | Integer seed for the model for reproducible results                                                        |
+| `--model-temperature`      | -     | number  | -       | Controls the randomness of the model output (0.0 - 2.0)                                                    |
+| `--model-top-k`            | -     | number  | -       | Only sample from the top K most likely tokens (integer)                                                    |
+| `--model-top-p`            | -     | number  | -       | Only sample from tokens whose cumulative probability exceeds P (0.0 - 1.0)                                 |
+| `--model-thinking-level`   | -     | string  | -       | Thinking level for the model. Choices: `LOW`, `HIGH`                                                       |
+| `--model-include-thoughts` | -     | boolean | -       | Indicates whether to include thoughts in the response. If true, thoughts are returned only when available. |
+| `--model-thinking-budget`  | -     | number  | -       | The number of thoughts tokens that the model should generate (integer, 0 or positive)                      |
+
+## Use from CLI
+
+```bash
+gemini-mp --model-seed=1111 --prompt "'say random string without use of tools'"
+gemini-mp --model gemini-3-flash-preview --model-seed=1111 --model-temperature=0 --model-top-k=1 --model-top-p=0 --model-thinking-level=LOW --model-include-thoughts=false --prompt "'say random string without use of tools'"
+```
+
 # Gemini CLI
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
-[![Gemini CLI E2E (Chained)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml)
-[![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
-[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
-[![View Code Wiki](https://assets.codewiki.google/readme-badge/static.svg)](https://codewiki.google/github.com/google-gemini/gemini-cli?utm_source=badge&utm_medium=github&utm_campaign=github.com/google-gemini/gemini-cli)
+[![Gemini CLI CI](https://github.com/oprudkyi/google-gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/oprudkyi/google-gemini-cli/actions/workflows/ci.yml)
+[![Gemini CLI E2E (Chained)](https://github.com/oprudkyi/google-gemini-cli/actions/workflows/chained_e2e.yml/badge.svg)](https://github.com/oprudkyi/google-gemini-cli/actions/workflows/chained_e2e.yml)
+[![Version](https://img.shields.io/npm/v/@oprudkyi/gemini-cli-with-model-params)](https://www.npmjs.com/package/@oprudkyi/gemini-cli-with-model-params)
+[![License](https://img.shields.io/github/license/oprudkyi/google-gemini-cli)](https://github.com/oprudkyi/google-gemini-cli/blob/main/LICENSE)
+[![View Code Wiki](https://assets.codewiki.google/readme-badge/static.svg)](https://codewiki.google/github.com/oprudkyi/google-gemini-cli?utm_source=badge&utm_medium=github&utm_campaign=github.com/oprudkyi/google-gemini-cli)
 
 ![Gemini CLI Screenshot](/docs/assets/gemini-screenshot.png)
 
@@ -39,25 +64,13 @@ for recommended system specifications and a detailed installation guide.
 
 ```bash
 # Using npx (no installation required)
-npx @google/gemini-cli
+npx @oprudkyi/gemini-cli-with-model-params
 ```
 
 #### Install globally with npm
 
 ```bash
-npm install -g @google/gemini-cli
-```
-
-#### Install globally with Homebrew (macOS/Linux)
-
-```bash
-brew install gemini-cli
-```
-
-#### Install globally with MacPorts (macOS)
-
-```bash
-sudo port install gemini-cli
+npm install -g @oprudkyi/gemini-cli-with-model-params
 ```
 
 #### Install with Anaconda (for restricted environments)
@@ -68,22 +81,12 @@ conda create -y -n gemini_env -c conda-forge nodejs
 conda activate gemini_env
 
 # Install Gemini CLI globally via npm (inside the environment)
-npm install -g @google/gemini-cli
+npm install -g @oprudkyi/gemini-cli-with-model-params
 ```
 
 ## Release Cadence and Tags
 
 See [Releases](./docs/releases.md) for more details.
-
-### Preview
-
-New preview releases will be published each week at UTC 23:59 on Tuesdays. These
-releases will not have been fully vetted and may contain regressions or other
-outstanding issues. Please help us test and install with `preview` tag.
-
-```bash
-npm install -g @google/gemini-cli@preview
-```
 
 ### Stable
 
@@ -92,17 +95,7 @@ npm install -g @google/gemini-cli@preview
   and validations. Use `latest` tag.
 
 ```bash
-npm install -g @google/gemini-cli@latest
-```
-
-### Nightly
-
-- New releases will be published each day at UTC 00:00. This will be all changes
-  from the main branch as represented at time of release. It should be assumed
-  there are pending validations and issues. Use `nightly` tag.
-
-```bash
-npm install -g @google/gemini-cli@nightly
+npm install -g @oprudkyi/gemini-cli-with-model-params@latest
 ```
 
 ## 📋 Key Features
@@ -138,8 +131,8 @@ Integrate Gemini CLI directly into your GitHub workflows with
   suggestions
 - **Issue Triage**: Automated labeling and prioritization of GitHub issues based
   on content analysis
-- **On-demand Assistance**: Mention `@gemini-cli` in issues and pull requests
-  for help with debugging, explanations, or task delegation
+- **On-demand Assistance**: Mention `@gemini-mp` in issues and pull requests for
+  help with debugging, explanations, or task delegation
 - **Custom Workflows**: Build automated, scheduled and on-demand workflows
   tailored to your team's needs
 
@@ -164,7 +157,7 @@ for details)
 #### Start Gemini CLI, then choose _Sign in with Google_ and follow the browser authentication flow when prompted
 
 ```bash
-gemini
+gemini-mp
 ```
 
 #### If you are using a paid Code Assist License from your organization, remember to set the Google Cloud Project
@@ -172,7 +165,7 @@ gemini
 ```bash
 # Set your Google Cloud Project
 export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-gemini
+gemini-mp
 ```
 
 ### Option 2: Gemini API Key
@@ -188,7 +181,7 @@ gemini
 ```bash
 # Get your key from https://aistudio.google.com/apikey
 export GEMINI_API_KEY="YOUR_API_KEY"
-gemini
+gemini-mp
 ```
 
 ### Option 3: Vertex AI
@@ -205,7 +198,7 @@ gemini
 # Get your key from Google Cloud Console
 export GOOGLE_API_KEY="YOUR_API_KEY"
 export GOOGLE_GENAI_USE_VERTEXAI=true
-gemini
+gemini-mp
 ```
 
 For Google Workspace accounts and other authentication methods, see the
@@ -218,19 +211,19 @@ For Google Workspace accounts and other authentication methods, see the
 #### Start in current directory
 
 ```bash
-gemini
+gemini-mp
 ```
 
 #### Include multiple directories
 
 ```bash
-gemini --include-directories ../lib,../docs
+gemini-mp --include-directories ../lib,../docs
 ```
 
 #### Use specific model
 
 ```bash
-gemini -m gemini-2.5-flash
+gemini-mp -m gemini-2.5-flash
 ```
 
 #### Non-interactive mode for scripts
@@ -238,21 +231,21 @@ gemini -m gemini-2.5-flash
 Get a simple text response:
 
 ```bash
-gemini -p "Explain the architecture of this codebase"
+gemini-mp -p "Explain the architecture of this codebase"
 ```
 
 For more advanced scripting, including how to parse JSON and handle errors, use
 the `--output-format json` flag to get structured output:
 
 ```bash
-gemini -p "Explain the architecture of this codebase" --output-format json
+gemini-mp -p "Explain the architecture of this codebase" --output-format json
 ```
 
 For real-time event streaming (useful for monitoring long-running operations),
 use `--output-format stream-json` to get newline-delimited JSON events:
 
 ```bash
-gemini -p "Run tests and deploy" --output-format stream-json
+gemini-mp -p "Run tests and deploy" --output-format stream-json
 ```
 
 ### Quick Examples
@@ -261,16 +254,16 @@ gemini -p "Run tests and deploy" --output-format stream-json
 
 ```bash
 cd new-project/
-gemini
+gemini-mp
 > Write me a Discord bot that answers questions using a FAQ.md file I will provide
 ```
 
 #### Analyze existing code
 
 ```bash
-git clone https://github.com/google-gemini/gemini-cli
-cd gemini-cli
-gemini
+git clone https://github.com/oprudkyi/google-gemini-cli
+cd google-gemini-cli
+gemini-mp
 > Give me a summary of all of the changes that went in yesterday
 ```
 
@@ -368,11 +361,11 @@ for planned features and priorities.
 
 - **[Official Roadmap](./ROADMAP.md)** - See what's coming next.
 - **[Changelog](./docs/changelogs/index.md)** - See recent notable updates.
-- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package
-  registry.
-- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** -
+- **[NPM Package](https://www.npmjs.com/package/@oprudkyi/gemini-cli-with-model-params)** -
+  Package registry.
+- **[GitHub Issues](https://github.com/oprudkyi/google-gemini-cli/issues)** -
   Report bugs or request features.
-- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** -
+- **[Security Advisories](https://github.com/oprudkyi/google-gemini-cli/security/advisories)** -
   Security updates.
 
 ### Uninstall
