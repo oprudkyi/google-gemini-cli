@@ -1,5 +1,5 @@
 {
-  "name": "@google/gemini-cli",
+  "name": "@oprudkyi/gemini-cli-mp",
   "version": "0.33.1",
   "engines": {
     "node": ">=20.0.0"
@@ -8,7 +8,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "private": "true",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/google-gemini/gemini-cli.git"
