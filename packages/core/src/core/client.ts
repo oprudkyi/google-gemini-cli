@@ -5,7 +5,6 @@
  */
 
 import type {
-  GenerateContentConfig,
   PartListUnion,
   Content,
   Tool,
@@ -62,6 +61,7 @@ import {
 } from '../availability/policyHelpers.js';
 import { resolveModel, isGemini2Model } from '../config/models.js';
 import type { RetryAvailabilityContext } from '../utils/retry.js';
+import { applyGlobalGenerationConfig } from './generateContentConfig.js';
 import { partToString } from '../utils/partUtils.js';
 import { coreEvents, CoreEvent } from '../utils/events.js';
 import type { LlmRole } from '../telemetry/types.js';
@@ -978,11 +978,14 @@ export class GeminiClient {
           currentAttemptGenerateContentConfig = generateContentConfig;
         }
 
-        const requestConfig: GenerateContentConfig = {
-          ...currentAttemptGenerateContentConfig,
-          abortSignal,
-          systemInstruction,
-        };
+        const requestConfig = applyGlobalGenerationConfig(
+          {
+            ...currentAttemptGenerateContentConfig,
+            abortSignal,
+            systemInstruction,
+          },
+          this.config,
+        );
 
         return this.getContentGeneratorOrFail().generateContent(
           {
