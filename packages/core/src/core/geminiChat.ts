@@ -46,6 +46,7 @@ import {
 import { handleFallback } from '../fallback/handler.js';
 import { isFunctionResponse } from '../utils/messageInspectors.js';
 import { partListUnionToString } from './geminiRequest.js';
+import { applyGlobalGenerationConfig } from './generateContentConfig.js';
 import type { ModelConfigKey } from '../services/modelConfigService.js';
 import { estimateTokenCountSync } from '../utils/tokenCalculation.js';
 import {
@@ -512,14 +513,17 @@ export class GeminiChat {
       }
 
       lastModelToUse = modelToUse;
-      const config: GenerateContentConfig = {
-        ...currentGenerateContentConfig,
-        // TODO(12622): Ensure we don't overrwrite these when they are
-        // passed via config.
-        systemInstruction: this.systemInstruction,
-        tools: this.tools,
-        abortSignal,
-      };
+      const config = applyGlobalGenerationConfig(
+        {
+          ...currentGenerateContentConfig,
+          // TODO(12622): Ensure we don't overrwrite these when they are
+          // passed via config.
+          systemInstruction: this.systemInstruction,
+          tools: this.tools,
+          abortSignal,
+        },
+        this.config,
+      );
 
       let contentsToUse: Content[] = supportsModernFeatures(modelToUse)
         ? [...contentsForPreviewModel]
