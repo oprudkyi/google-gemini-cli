@@ -1,3 +1,21 @@
+# Fork of Gemini CLI with support of model parameters
+
+Added ability to override default model parameters, via cli or config, useful
+for
+
+- advanced use cases in scripting or github actions
+- fine-tune speed/expenses
+
+| Option                     | Alias | Type    | Default | Description                                                                                                |
+| -------------------------- | ----- | ------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `--model-seed`             | -     | number  | -       | Integer seed for the model for reproducible results                                                        |
+| `--model-temperature`      | -     | number  | -       | Controls the randomness of the model output (0.0 - 2.0)                                                    |
+| `--model-top-k`            | -     | number  | -       | Only sample from the top K most likely tokens (integer)                                                    |
+| `--model-top-p`            | -     | number  | -       | Only sample from tokens whose cumulative probability exceeds P (0.0 - 1.0)                                 |
+| `--model-thinking-level`   | -     | string  | -       | Thinking level for the model. Choices: `MINIMAL`, `LOW`, `MEDIUM`, `HIGH`                                  |
+| `--model-include-thoughts` | -     | boolean | -       | Indicates whether to include thoughts in the response. If true, thoughts are returned only when available. |
+| `--model-thinking-budget`  | -     | number  | -       | The number of thoughts tokens that the model should generate (integer, 0 or positive)                      |
+
 # Gemini CLI
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
