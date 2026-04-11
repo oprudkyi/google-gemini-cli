@@ -55,11 +55,12 @@ export const getGitRepoRoot = (): string => {
  */
 export const getLatestGitHubRelease = async (
   proxy?: string,
+  repo: string = 'google-github-actions/run-gemini-cli',
 ): Promise<string> => {
   try {
     const controller = new AbortController();
 
-    const endpoint = `https://api.github.com/repos/google-github-actions/run-gemini-cli/releases/latest`;
+    const endpoint = `https://api.github.com/repos/${repo}/releases/latest`;
 
     const response = await fetch(endpoint, {
       method: 'GET',

@@ -42,8 +42,7 @@ export const GITHUB_COMMANDS_PATHS = [
   'pr-review/gemini-review.toml',
 ];
 
-const REPO_DOWNLOAD_URL =
-  'https://raw.githubusercontent.com/google-github-actions/run-gemini-cli';
+const DEFAULT_REPO = 'google-github-actions/run-gemini-cli';
 const SOURCE_DIR = 'examples/workflows';
 // Generate OS-specific commands to open the GitHub pages needed for setup.
 function getOpenUrlsCommands(readmeUrl: string): string[] {
@@ -109,12 +108,14 @@ async function downloadFiles({
   paths,
   releaseTag,
   targetDir,
+  repo,
   proxy,
   abortController,
 }: {
   paths: string[];
   releaseTag: string;
   targetDir: string;
+  repo: string;
   proxy: string | undefined;
   abortController: AbortController;
 }): Promise<void> {
@@ -122,7 +123,7 @@ async function downloadFiles({
   for (const fileBasename of paths) {
     downloads.push(
       (async () => {
-        const endpoint = `${REPO_DOWNLOAD_URL}/refs/tags/${releaseTag}/${SOURCE_DIR}/${fileBasename}`;
+        const endpoint = `https://raw.githubusercontent.com/${repo}/refs/tags/${releaseTag}/${SOURCE_DIR}/${fileBasename}`;
         const response = await fetch(endpoint, {
           method: 'GET',
           dispatcher: proxy ? new ProxyAgent(proxy) : undefined,
@@ -179,10 +180,12 @@ async function createDirectory(dirPath: string): Promise<void> {
 async function downloadSetupFiles({
   configs,
   releaseTag,
+  repo,
   proxy,
 }: {
   configs: Array<{ paths: string[]; targetDir: string }>;
   releaseTag: string;
+  repo: string;
   proxy: string | undefined;
 }): Promise<void> {
   try {
@@ -193,6 +196,7 @@ async function downloadSetupFiles({
           paths,
           releaseTag,
           targetDir,
+          repo,
           proxy,
           abortController,
         });
@@ -206,11 +210,13 @@ async function downloadSetupFiles({
 
 export const setupGithubCommand: SlashCommand = {
   name: 'setup-github',
-  description: 'Set up GitHub Actions',
+  description:
+    'Set up GitHub Actions. Optional argument: <repository> (defaults to google-github-actions/run-gemini-cli)',
   kind: CommandKind.BUILT_IN,
   autoExecute: true,
   action: async (
     context: CommandContext,
+    args: string,
   ): Promise<SlashCommandActionReturn> => {
     if (!isGitHubRepository()) {
       throw new Error(
@@ -230,9 +236,10 @@ export const setupGithubCommand: SlashCommand = {
     }
 
     // Get the latest release tag from GitHub
+    const repo = args?.trim() || DEFAULT_REPO;
     const proxy = context?.services?.agentContext?.config.getProxy();
-    const releaseTag = await getLatestGitHubRelease(proxy);
-    const readmeUrl = `https://github.com/google-github-actions/run-gemini-cli/blob/${releaseTag}/README.md#quick-start`;
+    const releaseTag = await getLatestGitHubRelease(proxy, repo);
+    const readmeUrl = `https://github.com/${repo}/blob/${releaseTag}/README.md#quick-start`;
 
     // Create workflows directory
     const workflowsDir = path.join(gitRepoRoot, '.github', 'workflows');
@@ -248,6 +255,7 @@ export const setupGithubCommand: SlashCommand = {
         { paths: GITHUB_COMMANDS_PATHS, targetDir: commandsDir },
       ],
       releaseTag,
+      repo,
       proxy,
     });
 
