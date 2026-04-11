@@ -407,6 +407,10 @@ Slash commands provide meta-level control over the CLI itself.
 
 - **Description:** Set up GitHub Actions to triage issues and review PRs with
   Gemini.
+- **Usage:** `/setup-github [repository]`
+  - `[repository]`: (Optional) The target GitHub repository to fetch setup files
+    from (e.g., `my-org/my-repo`). Defaults to
+    `google-github-actions/run-gemini-cli`.
 
 ### `/skills`
 

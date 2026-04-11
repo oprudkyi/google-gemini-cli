@@ -121,6 +121,49 @@ describe('setupGithubCommand', async () => {
     }
   });
 
+  it('uses custom repository when provided as argument', async () => {
+    const customRepo = 'my-org/my-repo';
+    const fakeRepoRoot = scratchDir;
+    const fakeReleaseVersion = 'v2.0.0';
+
+    vi.mocked(global.fetch).mockImplementation(async (url) => {
+      const urlStr = url.toString();
+      expect(urlStr).toContain(
+        `https://raw.githubusercontent.com/${customRepo}`,
+      );
+      expect(urlStr).toContain(fakeReleaseVersion);
+      return new Response('fake-content', {
+        status: 200,
+        statusText: 'OK',
+        headers: { 'Content-Type': 'text/plain' },
+      });
+    });
+
+    vi.mocked(gitUtils.isGitHubRepository).mockReturnValueOnce(true);
+    vi.mocked(gitUtils.getGitRepoRoot).mockReturnValueOnce(fakeRepoRoot);
+    vi.mocked(gitUtils.getLatestGitHubRelease).mockResolvedValueOnce(
+      fakeReleaseVersion,
+    );
+    vi.mocked(gitUtils.getGitHubRepoInfo).mockReturnValue({
+      owner: 'my-org',
+      repo: 'my-repo',
+    });
+    vi.mocked(commandUtils.getUrlOpenCommand).mockReturnValueOnce('open');
+
+    const result = (await setupGithubCommand.action?.(
+      {} as CommandContext,
+      customRepo,
+    )) as ToolActionReturn;
+
+    expect(gitUtils.getLatestGitHubRelease).toHaveBeenCalledWith(
+      undefined,
+      customRepo,
+    );
+    expect(result.toolArgs['command']).toContain(
+      `https://github.com/${customRepo}/blob/${fakeReleaseVersion}/README.md#quick-start`,
+    );
+  });
+
   it('downloads workflows, updates gitignore, and does not include pipefail on windows', async () => {
     vi.spyOn(process, 'platform', 'get').mockReturnValue('win32');
     const fakeRepoOwner = 'fake';
